@@ -50,12 +50,12 @@
 				monthContentX = monthPosX + monthMargin;
 				monthContentY = monthPosY + monthMargin + 5;
 
-				doc.stroke().rect(monthPosX, monthPosY, monthWidth, monthHeight);
+				//doc.stroke().rect(monthPosX, monthPosY, monthWidth, monthHeight);
 
 				const { name, days } = yearData[monthIndex];
 
 				doc
-					.setFontSize(12)
+					.setFontSize(18)
 					.text(capitalize(name), monthContentX + monthMarginWidth / 2, monthContentY - 3, {
 						maxWidth: monthMarginWidth,
 						align: 'center',
@@ -80,11 +80,11 @@
 						dayContentX = dayPosX + dayMargin;
 						dayContentY = dayPosY + dayMargin;
 
-						//doc.stroke().rect(dayPosX, dayPosY, dayWidth, dayHeight);
+						doc.stroke().rect(dayPosX, dayPosY, dayWidth, dayHeight);
 
 						if (dr === 0) {
 							const wd = weekdayList[dc].substring(0, 2);
-							doc.setFontSize(6).text(capitalize(wd), dayContentX, dayContentY, {
+							doc.setFontSize(10).text(capitalize(wd), dayContentX, dayContentY, {
 								//maxWidth: dayMarginWidth,
 								baseline: 'top'
 							});
@@ -95,7 +95,14 @@
 						if (dr === 1 && dc < startWeekday) continue;
 
 						if (days[dayIndex]) {
-							doc.setFontSize(6).text(days[dayIndex].number, dayContentX, dayContentY, {
+							const { number, santoral } = days[dayIndex];
+
+							doc.setFontSize(10).text(number, dayContentX, dayContentY, {
+								maxWidth: dayMarginWidth,
+								baseline: 'top'
+							});
+							
+							doc.setFontSize(6).text(santoral, dayContentX, dayContentY + 5, {
 								maxWidth: dayMarginWidth,
 								baseline: 'top'
 							});
