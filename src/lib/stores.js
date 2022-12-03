@@ -1,9 +1,11 @@
 import { writable } from 'svelte/store';
-import { PageSizes } from 'pdf-lib';
 
 export const options = writable({
-	docSize: PageSizes.A4,
-	crop_marks: false
+	docWidth: 148,
+	docHeight: 210,
+	orientation: "p",
+	crop_marks: false,
+	starts_monday: true
 });
 
 export const queue = writable({

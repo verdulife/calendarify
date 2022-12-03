@@ -3,27 +3,32 @@
 	import { jsPDF } from 'jspdf';
 	import { getCalendarData, currentYear, getWeekdays } from '$lib/scripts/calendar-utils';
 	import { capitalize } from '$lib/scripts/text-utils';
+	import { options } from '$lib/stores';
+
+	import Options from '$lib/components/Options.svelte';
 
 	const yearData = getCalendarData(currentYear, 'es-Es');
 	const weekdayList = getWeekdays('es-Es');
 	let src;
 
 	async function createPdf() {
-		const pageWidth = 210;
-		const pageHeight = 297;
+		const { docWidth, docHeight, orientation } = $options;
 
 		const doc = new jsPDF({
-			orientation: 'p',
+			orientation,
 			unit: 'mm',
-			format: [pageWidth, pageHeight],
+			format: [docWidth, docHeight],
 			putOnlyUsedFonts: true
 		});
+
+		const pageWidth = doc.internal.pageSize.getWidth();
+		const pageHeight = doc.internal.pageSize.getHeight();
 
 		const margin = 10;
 		const marginWidth = pageWidth - margin * 2;
 		const marginHeight = pageHeight - margin * 2;
 
-		doc.stroke().rect(margin, margin, marginWidth, marginHeight);
+		//doc.stroke().rect(margin, margin, marginWidth, marginHeight);
 
 		const monthColLength = 3;
 		const monthRowLength = 4;
@@ -59,7 +64,7 @@
 				const dayRowLength = 7;
 				const dayWidth = monthMarginWidth / dayColLength;
 				const dayHeight = monthMarginHeight / dayRowLength;
-				const dayMargin = 1;
+				const dayMargin = 0.5;
 				const dayMarginWidth = dayWidth - dayMargin * 2;
 				const startWeekday = days[0].weekday.number;
 
@@ -73,12 +78,12 @@
 						dayContentX = dayPosX + dayMargin;
 						dayContentY = dayPosY + dayMargin;
 
-						doc.stroke().rect(dayPosX, dayPosY, dayWidth, dayHeight);
+						//doc.stroke().rect(dayPosX, dayPosY, dayWidth, dayHeight);
 
 						if (dr === 0) {
 							const wd = weekdayList[dc].substring(0, 2);
-							doc.setFontSize(8).text(capitalize(wd), dayContentX, dayContentY, {
-								maxWidth: dayMarginWidth,
+							doc.setFontSize(6).text(capitalize(wd), dayContentX, dayContentY, {
+								//maxWidth: dayMarginWidth,
 								baseline: 'top'
 							});
 
@@ -88,7 +93,7 @@
 						if (dr === 1 && dc < startWeekday) continue;
 
 						if (days[dayIndex]) {
-							doc.setFontSize(8).text(days[dayIndex].number, dayContentX, dayContentY, {
+							doc.setFontSize(6).text(days[dayIndex].number, dayContentX, dayContentY, {
 								maxWidth: dayMarginWidth,
 								baseline: 'top'
 							});
@@ -119,10 +124,13 @@
 		src = blob + '#view=fit';
 	}
 
+	$: $options.docWidth || $options.docHeight, createPdf();
+
 	onMount(createPdf);
 </script>
 
 <iframe class="fill" {src} title="preview" />
+<Options />
 
 <style lang="scss">
 	iframe {
