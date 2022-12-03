@@ -11,6 +11,8 @@
 	const weekdayList = getWeekdays('es-Es');
 	let src;
 
+	console.log(yearData[10]);
+
 	async function createPdf() {
 		const { docWidth, docHeight, orientation } = $options;
 
@@ -120,7 +122,7 @@
 			creator: 'Calendarify™'
 		});
 
-		const blob = doc.output('bloburi', 'filename');
+		const blob = doc.output('bloburi', { filename: 'pdf' });
 		src = blob + '#view=fit';
 	}
 

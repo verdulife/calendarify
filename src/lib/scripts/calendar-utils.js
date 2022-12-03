@@ -1,4 +1,5 @@
 import { options } from '$lib/stores';
+import { santoral } from '$lib/santoral';
 
 export const yearMonths = 12;
 export const weekDays = 7;
@@ -49,6 +50,7 @@ export function getCalendarData(year, language) {
 			const weekdayName = new Intl.DateTimeFormat(language, { weekday: 'long' }).format(currentDay);
 
 			const dayData = {
+				santoral: santoral[m - 1][d - 1],
 				fullDate: new Intl.DateTimeFormat(language, { dateStyle: 'full' }).format(currentDay),
 				number: new Intl.DateTimeFormat(language, { day: 'numeric' }).format(currentDay),
 				weekday: {
