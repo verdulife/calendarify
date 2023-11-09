@@ -1,20 +1,18 @@
 <script>
 	import { onMount } from 'svelte';
 	import { jsPDF } from 'jspdf';
-	import { getCalendarData, currentYear, getWeekdays } from '$lib/scripts/calendar-utils';
+	import { getCalendarData, getWeekdays } from '$lib/scripts/calendar-utils';
 	import { capitalize } from '$lib/scripts/text-utils';
 	import { options } from '$lib/stores';
 
 	import Options from '$lib/components/Options.svelte';
 
-	const yearData = getCalendarData(currentYear, 'es-Es');
+	const yearData = getCalendarData(2024, 'es-Es');
 	const weekdayList = getWeekdays('es-Es');
 	let src;
 
-	console.log(yearData[10]);
-
 	async function createPdf() {
-		const { docWidth, docHeight, orientation } = $options;
+		const { docWidth, docHeight, orientation, boxed } = $options;
 
 		const doc = new jsPDF({
 			orientation,
@@ -45,6 +43,8 @@
 
 		for (let mr = 0; mr < monthRowLength; mr++) {
 			for (let mc = 0; mc < monthColLength; mc++) {
+				if (monthIndex !== 0 && !$options.onePage) doc.addPage();
+
 				monthPosX = margin + monthWidth * mc;
 				monthPosY = margin + monthHeight * mr;
 				monthContentX = monthPosX + monthMargin;
@@ -80,7 +80,7 @@
 						dayContentX = dayPosX + dayMargin;
 						dayContentY = dayPosY + dayMargin;
 
-						doc.stroke().rect(dayPosX, dayPosY, dayWidth, dayHeight);
+						if (boxed) doc.stroke().rect(dayPosX, dayPosY, dayWidth, dayHeight);
 
 						if (dr === 0) {
 							const wd = weekdayList[dc].substring(0, 2);
@@ -101,11 +101,13 @@
 								maxWidth: dayMarginWidth,
 								baseline: 'top'
 							});
-							
-							doc.setFontSize(6).text(santoral, dayContentX, dayContentY + 5, {
-								maxWidth: dayMarginWidth,
-								baseline: 'top'
-							});
+
+							if ($options.santoral) {
+								doc.setFontSize(6).text(santoral, dayContentX, dayContentY + 5, {
+									maxWidth: dayMarginWidth,
+									baseline: 'top'
+								});
+							}
 						} else {
 							doc.setFontSize(8).text('', dayContentX, dayContentY, {
 								maxWidth: dayMarginWidth,
